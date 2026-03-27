@@ -1,0 +1,24 @@
+version: "3.8"
+
+# macOS에서는 Docker의 network_mode: host가 동작하지 않으므로
+# Squid를 호스트에 직접 설치하는 것을 권장합니다.
+# 이 docker-compose는 Linux 서버용입니다.
+#
+# macOS 사용법: scripts/start.sh 실행 (brew 기반)
+# Linux 사용법: docker compose up -d
+
+services:
+  squid:
+    build: .
+    container_name: egress-proxy
+    ports:
+      - "3128:3128"
+    volumes:
+      - ./squid.conf:/etc/squid/squid.conf:ro
+      - squid-cache:/var/spool/squid
+      - squid-logs:/var/log/squid
+    restart: unless-stopped
+
+volumes:
+  squid-cache:
+  squid-logs:
